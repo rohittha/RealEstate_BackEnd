@@ -34,15 +34,35 @@ router.post("/", upload.single("imagefile"), async (req, res) => {
   }
 });
 
+router.post("/getProperties", async (req, res) => {
+  try {
+    console.log("inside getAllProperty req.body: ", req.body);
+    const query = req.body;
+    console.log("query: ", query);
+
+    const properties = await Property.find(query);
+    if (!properties) {
+      console.log("No property found!");
+      return res.status(409).send({ message: "No property found!" });
+    } else res.json(properties);
+
+    //console.log("properties= ", properties);
+  } catch (error) {
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+});
+
 router.get("/getAllProperty", async (req, res) => {
   try {
-    console.log("inside getAllProperty");
-    const properties = await Property.find();
-    if (!properties)
-      return res.status(409).send({ message: "No property found!" });
-    else res.json(properties);
+    console.log("inside getAllProperty req.body: ", req.body);
 
-    console.log("properties= ", properties);
+    const properties = await Property.find();
+    if (!properties) {
+      console.log("No property found!");
+      return res.status(409).send({ message: "No property found!" });
+    } else res.json(properties);
+
+    //console.log("properties= ", properties);
   } catch (error) {
     res.status(500).send({ message: "Internal Server Error" });
   }
