@@ -31,6 +31,15 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.get("/test", async (req, res) => {
+  try {
+    res.status(200).send({ message: "Test ran successfully for azure!!! " });
+  } catch (error) {
+    console.log("test not working:", error);
+    res.status(500).send({ message: "Internal Server Error test" });
+  }
+});
+
 const validate = (data) => {
   const schema = Joi.object({
     email: Joi.string().email().required().label("Email"),
