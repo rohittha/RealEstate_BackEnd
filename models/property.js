@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 // const jwt = require("jsonwebtoken");
 const Joi = require("joi");
+const { array } = require("joi");
 // const passwordComplexity = require("joi-password-complexity");
 
 const userSchema = new mongoose.Schema({
@@ -14,7 +15,8 @@ const userSchema = new mongoose.Schema({
   baths: { type: Number, required: true },
   price: { type: Number, required: true },
   listingtype: { type: String, required: true },
-  coverimage: { type: String, required: true },
+  propertyImages: { type: Array, required: true },
+  // coverimage: { type: String, required: true },
 });
 
 // userSchema.methods.generateAuthToken = function () {
@@ -49,7 +51,8 @@ const validate = (data) => {
     baths: Joi.number().required().label("Baths"),
     price: Joi.number().required().label("Price"),
     listingtype: Joi.string().required().label("Listing Type"),
-    coverimage: Joi.string().label("Cover Image"),
+    // propertyImages: Joi.array().required().label(" Property Images"),
+    // coverimage: Joi.string().label("Cover Image"),
   });
   return schema.validate(data);
 };
