@@ -1,13 +1,28 @@
 const router = require("express").Router();
 const multer = require("multer");
+const path = require("path");
 const { Property, validate } = require("../models/property");
-const upload = multer({ dest: "uploads/" }); // Specify the directory to store uploaded images
+// const upload = multer({ dest: "uploads/" }); // Specify the directory to store uploaded images
 
-router.post("/", upload.single("imagefile"), async (req, res) => {
+const storage = multer.diskStorage({
+  destination: "./uploads/",
+  filename: function (req, file, cb) {
+    cb(
+      null,
+      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+    );
+  },
+});
+
+const upload = multer({ storage });
+
+router.post("/", upload.array("files"), async (req, res) => {
   try {
     console.log("in property start!");
-    const imageFile = req.body.imagefile;
-    const { error } = validate(req.body);
+    const files = req.files.map((file) => file.filename);
+    const data = JSON.parse(req.body.data);
+
+    const { error } = validate(data);
 
     // if error display to property
     if (error)
@@ -15,8 +30,10 @@ router.post("/", upload.single("imagefile"), async (req, res) => {
 
     // if property exists, send error messsage
     const property = await Property.findOne({
-      addressline1: req.body.addressline1,
+      addressline1: data.addressline1,
     });
+
+    console.log("property:", property);
     if (property)
       return res
         .status(409)
@@ -27,7 +44,13 @@ router.post("/", upload.single("imagefile"), async (req, res) => {
     // const hashPassword = await bcrypt.hash(req.body.password, salt);
 
     // save property to db
-    await new Property({ ...req.body }).save();
+    const finalData = {
+      ...data,
+      propertyImages: files,
+    };
+
+    await new Property(finalData).save();
+    // await new Property({ ...req.body }).save();
     res.status(201).send({ message: "Property created successfully" });
   } catch (error) {
     res.status(500).send({ message: "Internal Server Error" });
@@ -61,7 +84,7 @@ router.get("/getAllProperty", async (req, res) => {
       console.log("No property found!");
       return res.status(409).send({ message: "No property found!" });
     } else res.json(properties);
-
+    console.log("===", properties);
     //console.log("properties= ", properties);
   } catch (error) {
     res.status(500).send({ message: "Internal Server Error" });
