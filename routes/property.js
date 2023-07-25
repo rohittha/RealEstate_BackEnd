@@ -102,3 +102,5 @@ router.get("/getAllProperty", async (req, res) => {
 });
 
 module.exports = router;
+
+
