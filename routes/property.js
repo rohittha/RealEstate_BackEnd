@@ -60,7 +60,17 @@ router.post("/", upload.array("files"), async (req, res) => {
 router.post("/getProperties", async (req, res) => {
   try {
     console.log("inside getAllProperty req.body: ", req.body);
-    const query = req.body;
+    // const query = req.body;
+    const { city, bedrooms, baths, province, price } = req.body;
+    const query = {};
+
+    //creating a query for the available properties only coming from front end.
+    if (city) query.city = city;
+    if (bedrooms) query.bedrooms = bedrooms;
+    if (baths) query.baths = baths;
+    if (province) query.province = province;
+    if (price) query.price = price;
+
     console.log("query: ", query);
 
     const properties = await Property.find(query);
@@ -92,3 +102,5 @@ router.get("/getAllProperty", async (req, res) => {
 });
 
 module.exports = router;
+
+
