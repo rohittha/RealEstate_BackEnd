@@ -172,6 +172,45 @@ router.post("/", upload.single("files"), async (req, res) => {
   }
 });
 
+router.put("/:id", upload.array("files"), async (req, res) => {
+  try {
+    console.log("--inside put -----");
+    const { id } = req.params;
+    const data = JSON.parse(req.body.data);
+    // const files = req.files.map((file) => file.filename);
+    if (data._id) {
+      delete data._id; // Remove the _id field to prevent updating it
+      delete data.__v;
+      delete data.propertyImages;
+    }
+
+    const { error } = validate(data);
+
+    // Check for validation error and return a 400 response with the error message
+    if (error) {
+      console.log("-------", error);
+      console.log("Validation error:", error);
+      return res.status(400).send({ message: error.details[0].message });
+    }
+
+    // Update the document in MongoDB
+    const updatedData = {
+      ...data,
+    };
+
+    // Using `findOneAndUpdate` to update the document and exclude the _id field
+    await Property.findOneAndUpdate({ _id: id }, updatedData, { new: true });
+    res.status(200).json({
+      message: "Form data saved successfully!",
+      updatedData: updatedData,
+    });
+    // res.status(200).send({ message: "Property updated successfully" });
+  } catch (error) {
+    console.log("----------!", error);
+    res.status(500).send({ message: "Internal Server Error" });
+  }
+});
+
 router.post("/getProperties", async (req, res) => {
   try {
     console.log("inside getAllProperty req.body: ", req.body);
@@ -217,5 +256,3 @@ router.get("/getAllProperty", async (req, res) => {
 });
 
 module.exports = router;
-
-

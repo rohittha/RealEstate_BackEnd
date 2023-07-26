@@ -4,20 +4,23 @@ const Joi = require("joi");
 const { array } = require("joi");
 // const passwordComplexity = require("joi-password-complexity");
 
-const userSchema = new mongoose.Schema({
-  addressline1: { type: String, required: true },
-  addressline2: { type: String },
-  city: { type: String, required: true },
-  province: { type: String, required: true },
-  country: { type: String, required: true },
-  zipcode: { type: String, required: true },
-  bedrooms: { type: Number, required: true },
-  baths: { type: Number, required: true },
-  price: { type: Number, required: true },
-  listingtype: { type: String, required: true },
-  propertyImages: { type: Array, required: true },
-  // coverimage: { type: String, required: true },
-});
+const userSchema = new mongoose.Schema(
+  {
+    addressline1: { type: String, required: true },
+    addressline2: { type: String },
+    city: { type: String, required: true },
+    province: { type: String, required: true },
+    country: { type: String, required: true },
+    zipcode: { type: String, required: true },
+    bedrooms: { type: Number, required: true },
+    baths: { type: Number, required: true },
+    price: { type: Number, required: true },
+    listingtype: { type: String, required: true },
+    propertyImages: { type: Array, required: true },
+    // coverimage: { type: String, required: true },
+  },
+  { strict: "throw" }
+);
 
 // userSchema.methods.generateAuthToken = function () {
 //   const token = jwt.sign({ _id: this._id }, process.env.JWTPRIVATEKEY, {
